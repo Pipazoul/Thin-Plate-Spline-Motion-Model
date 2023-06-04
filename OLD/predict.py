@@ -23,15 +23,15 @@ from ffhq_dataset.landmarks_detector import LandmarksDetector
 warnings.filterwarnings("ignore")
 
 
-PREDICTOR = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
-LANDMARKS_DETECTOR = LandmarksDetector("shape_predictor_68_face_landmarks.dat")
+PREDICTOR = dlib.shape_predictor("./shape_predictor_68_face_landmarks.dat")
+LANDMARKS_DETECTOR = LandmarksDetector("./shape_predictor_68_face_landmarks.dat")
 
 
 class Predictor(BasePredictor):
     def setup(self):
 
         self.device = torch.device("cuda:0")
-        datasets = ["vox", "taichi", "ted", "mgif"]
+        datasets = ["vox"]
         (
             self.inpainting,
             self.kp_detector,
@@ -48,9 +48,10 @@ class Predictor(BasePredictor):
                 config_path=f"config/{d}-384.yaml"
                 if d == "ted"
                 else f"config/{d}-256.yaml",
-                checkpoint_path=f"checkpoints/{d}.pth.tar",
+                checkpoint_path="./checkpoints/vox-cpk.pth.tar",
                 device=self.device,
-            )
+            ) 
+
 
     def predict(
         self,
@@ -76,12 +77,13 @@ class Predictor(BasePredictor):
             # first run face alignment
             align_image(str(source_image), 'aligned.png')
             source_image = imageio.imread('aligned.png')
+            print("face alignement")
         else:
             source_image = imageio.imread(str(source_image))
         reader = imageio.get_reader(str(driving_video))
         fps = reader.get_meta_data()["fps"]
         source_image = resize(source_image, (pixel, pixel))[..., :3]
-
+        print("resized source_image.shape: ", source_image.shape)
         driving_video = []
         try:
             for im in reader:

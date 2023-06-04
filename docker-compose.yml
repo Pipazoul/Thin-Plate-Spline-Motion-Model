@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+    thinplate:
+      build: .
+      image: thinplate:latest
+      ports:
+        - "5014:5000"
+      volumes:
+        - ./main.py:/app/Thin-Plate-Spline-Motion-Model/main.py
+      deploy:
+        resources:
+          reservations:
+            devices:
+              - driver: nvidia
+                count: 1
+                capabilities: [gpu]

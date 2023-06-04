@@ -1,11 +1,14 @@
 build:
-  cuda: "11.0"
+  cuda: "10"
   gpu: true
-  python_version: "3.8"
+  python_version: "3.9"
   system_packages:
     - "libgl1-mesa-glx"
     - "libglib2.0-0"
     - "ninja-build"
+    - "cmake"
+    - "gcc"
+    - "wget"
   python_packages:
     - "ipython==7.21.0"
     - "torch==1.10.1"
@@ -35,6 +38,12 @@ build:
     - "tqdm==4.62.3"
     - "cmake==3.21.3"
   run:
-    - pip install dlib
+    - pip install dlib==19.23.0
+    - mkdir checkpoints
+    - wget -c https://cloud.tsinghua.edu.cn/f/da8d61d012014b12a9e4/?dl=1 -O checkpoints/vox.pth.tar
+    - wget -c https://cloud.tsinghua.edu.cn/f/483ef53650b14ac7ae70/?dl=1 -O checkpoints/ted.pth.tar
+    - wget -c https://cloud.tsinghua.edu.cn/f/9ec01fa4aaef423c8c02/?dl=1 -O checkpoints/taichi.pth.tar
+    - wget -c https://cloud.tsinghua.edu.cn/f/cd411b334a2e49cdb1e2/?dl=1 -O checkpoints/mgif.pth.tar
+
 
 predict: "predict.py:Predictor"
