@@ -55,7 +55,6 @@ async def generate_animation(request: AnimationRequest):
         #video_file = open(driving_video_path, "wb")
         #video_file.write(request.driving_video)
 
-
         reader = imageio.get_reader(driving_video_path)
         fps = reader.get_meta_data()["fps"]
         print(fps)
@@ -100,9 +99,35 @@ async def generate_animation(request: AnimationRequest):
         imageio.mimsave(output_video_path, [img_as_ubyte(frame) for frame in predictions], fps=fps)
 
         print("Saved animation", flush=True)
+
+        # extract audio from driving video using imageio ffmpeg
+        
+        #detect audio codec
+        cmd = "ffprobe -v error -select_streams a:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 " + driving_video_path
+        audio_codec = os.popen(cmd).read()
+        audio_codec = audio_codec.strip()
+        print(audio_codec)
+
+        audio_path = "audio." + audio_codec
+
+        cmd = "ffmpeg -i " + driving_video_path + " -vn -acodec copy " + audio_path
+        os.system(cmd)
+
+        print("Extracted audio", flush=True)
+
+        # merge audio and video using ffmpeg 
+        merged_video_path = "merged.mp4"
+        #imageio_ffmpeg.write_frames(output_video_path, predictions, fps=fps, audio_path=audio_path)
+        # input is output_video_path and audio_path and output is merged_video_path
+        cmd = "ffmpeg -i " + output_video_path + " -i " + audio_path + " -c:v copy -c:a aac -strict experimental " + merged_video_path
+        os.system(cmd)
+
+        print("Merged audio and video", flush=True)
+
+
         # Return animation base64 encoded
         # Return animation as base64 encoded
-        with open(output_video_path, "rb") as video_file:
+        with open(merged_video_path, "rb") as video_file:
             video_bytes = video_file.read()
         import base64
         # also add string data:video/mp4;base64
@@ -114,12 +139,17 @@ async def generate_animation(request: AnimationRequest):
        
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    '''finally:
+    finally:
         # Clean up downloaded files
         if os.path.exists(source_image_path):
             os.remove(source_image_path)
         if os.path.exists(driving_video_path):
             os.remove(driving_video_path)
-        #if os.path.exists(output_video_path):
-        #    os.remove(output_video_path)
-        '''
+        if os.path.exists(output_video_path):
+            os.remove(output_video_path)
+        if os.path.exists(audio_path):
+            os.remove(audio_path)
+        if os.path.exists(merged_video_path):
+            os.remove(merged_video_path)
+
+            

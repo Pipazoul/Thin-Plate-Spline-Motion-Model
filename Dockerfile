@@ -18,6 +18,7 @@ RUN pip install scikit-image
 COPY main.py /app/Thin-Plate-Spline-Motion-Model/main.py
 
 
+RUN apt install ffmpeg -y
 
 # reload and debug
 ENTRYPOINT [ "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000" , "--reload"]
