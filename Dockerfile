@@ -8,7 +8,7 @@ RUN git clone https://github.com/yoyo-nb/Thin-Plate-Spline-Motion-Model.git
 WORKDIR /app/Thin-Plate-Spline-Motion-Model
 
 RUN mkdir checkpoints
-RUN wget -c https://cloud.tsinghua.edu.cn/f/da8d61d012014b12a9e4/?dl=1 -O checkpoints/vox.pth.tar
+RUN wget -c https://stableai-space.fra1.digitaloceanspaces.com/vox.pth.tar -O checkpoints/vox.pth.tar
 
 RUN pip install fastapi uvicorn
 RUN pip install imageio imageio-ffmpeg

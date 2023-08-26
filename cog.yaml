@@ -1,0 +1,40 @@
+# Configuration for Cog ⚙️
+# Reference: https://github.com/replicate/cog/blob/main/docs/yaml.md
+
+build:
+  # set to true if your model requires a GPU
+  gpu: true
+  cuda: "11"
+
+  # a list of ubuntu apt packages to install
+  system_packages:
+    - "cmake" 
+    - "build-essential" 
+    - "git"
+    - "wget"
+    - "ffmpeg"
+
+  # python version in the form '3.11' or '3.11.4'
+  python_version: "3.8"
+
+  # a list of packages in the format <package-name>==<version>
+  python_packages:
+    - "torch==1.7.1"
+    - "fastapi"
+    - "uvicorn"
+    - "imageio"
+    - "imageio-ffmpeg"
+    - "matplotlib"
+    - "scikit-image"
+    - "tqdm"
+    - "torchvision"
+    - "boto3"
+
+
+  # commands run after the environment is setup
+  run:
+    - mkdir checkpoints
+    - wget -c https://stableai-space.fra1.digitaloceanspaces.com/vox.pth.tar -O checkpoints/vox.pth.tar
+
+# predict.py defines how predictions are run on your model
+predict: "predict.py:Predictor"

@@ -3,7 +3,7 @@ version: '3'
 services:
     thinplate:
       build: .
-      image: thinplate:latest
+      image: yassinsiouda/thinplate:latest
       ports:
         - "5014:5000"
       volumes:
